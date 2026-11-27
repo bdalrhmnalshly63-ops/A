@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShamsFlex app prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a shipped Saudi fintech-style app, calm and exact about money.
+IDEA: the ShamsFlex customer app itself, working, inside a phone.
+PICTURE: the phone is the picture: live quote, savings and MovePass screens.
+COLOUR and TYPE: brand deep green #0B3B2D, gold #F2A93B, mint #CFE3D9; Poppins.
+LAYOUT: modest caption above, phone centred; on phones the app fills the screen. */
+:root{color-scheme:light dark;--bg:light-dark(#E7EFEA,#07140F);--ink:light-dark(#10261E,#E6F0EB);--muted:light-dark(#5B7A6E,#9DB8AC);
+--card:light-dark(#FFFFFF,#12261E);--scr:light-dark(#F4F7F5,#0B1C16);--line:light-dark(#E1EAE5,#1E3A2F);--deep:#0B3B2D;--gold:#F2A93B;--golddk:light-dark(#9A6408,#F2B75A);--mint:light-dark(#CFE3D9,#21463A);--warn:light-dark(#FFF1DC,#3A2A10)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Poppins,system-ui,-apple-system,Segoe UI,Arial,sans-serif;overflow-x:clip}
+.wrap{display:flex;flex-direction:column;align-items:center;padding:24px 16px 40px;gap:14px}
+.cap{max-width:420px;text-align:center}.cap h1{font-size:20px;line-height:1.2;margin:0 0 4px}.cap p{margin:0;color:var(--muted);font-size:13px}
+.phone{width:400px;max-width:100%;height:820px;border-radius:52px;background:#0B1F18;padding:12px;box-shadow:0 30px 70px rgba(11,59,45,.25)}
+.app{height:100%;border-radius:42px;background:var(--scr);overflow:hidden;display:flex;flex-direction:column;position:relative}
+@media(max-width:480px){.wrap{padding:0}.cap{display:none}.phone{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}.app{border-radius:0}}
+header{background:var(--deep);color:#fff;padding:22px 20px 18px;display:flex;align-items:center;gap:12px}
+header img{width:40px;height:40px;border-radius:11px}header b{font-size:17px;display:block;line-height:1.2}header small{color:#BFD8CC;font-size:12px}
+main{flex:1;overflow-y:auto;padding:16px 16px 20px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-top:1px solid var(--line);padding:6px 6px 10px}
+nav button{background:none;border:0;font:inherit;font-size:12px;color:var(--muted);padding:8px 4px;min-height:52px;border-radius:12px;cursor:pointer}
+nav button i{display:block;width:24px;height:6px;border-radius:4px;margin:0 auto 6px;background:var(--mint)}
+nav button[aria-selected=true]{color:var(--ink);font-weight:600}nav button[aria-selected=true] i{background:var(--gold)}
+h2{font-size:19px;margin:0 0 2px;line-height:1.25}.sub{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+.card{background:var(--card);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid var(--line)}
+.hero{background:var(--deep);color:#fff;border-radius:20px;padding:16px 18px;margin-bottom:12px}
+.hero .l{font-size:12px;color:#BFD8CC}.hero .big{font-size:clamp(30px,9vw,38px);font-weight:700;line-height:1.1;white-space:nowrap}.hero .big span{font-size:15px;color:var(--gold);font-weight:600}
+.pill{display:inline-block;background:var(--gold);color:#0B3B2D;border-radius:20px;font-size:11.5px;font-weight:600;padding:3px 10px;margin-top:8px}
+label{display:block;font-size:12.5px;font-weight:600;margin:10px 0 5px}label:first-child{margin-top:0}
+input,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--scr);color:var(--ink);min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+input[type=range]{padding:0;border:0;background:none;accent-color:#0B3B2D;min-height:32px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}.kv:last-child{border:0}
+.kv b{white-space:nowrap}.kv.hl b{color:var(--golddk)}
+.btn{display:block;width:100%;border:0;border-radius:14px;background:var(--deep);color:#fff;font:inherit;font-weight:600;font-size:15px;padding:13px;min-height:48px;cursor:pointer;margin-top:6px}
+.btn.alt{background:none;color:var(--ink);border:2px solid var(--deep)}:root[data-theme=dark] .btn.alt,.btn.alt{border-color:var(--mint)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{background:var(--warn);border-radius:14px;padding:11px 13px;font-size:12.5px;margin-bottom:12px}.note b{display:block;font-size:13.5px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.badge{font-size:11.5px;padding:4px 10px;border-radius:20px;background:var(--mint);font-weight:500}.badge.no{background:var(--warn)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:120px;margin-top:8px}
+.bars button{flex:1;border:0;border-radius:6px 6px 3px 3px;background:var(--mint);cursor:pointer;padding:0}.bars button.on{background:var(--gold)}
+.mon{display:flex;gap:5px;margin-top:4px}.mon span{flex:1;text-align:center;font-size:10px;color:var(--muted)}
+.opt{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 13px;margin-bottom:8px;cursor:pointer;width:100%;font:inherit;color:inherit;text-align:left;min-height:56px}
+.opt[aria-checked=true]{border-color:var(--gold)}.radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);flex:none}.opt[aria-checked=true] .radio{border:6px solid var(--gold)}
+.opt b{display:block;font-size:13.5px}.opt small{color:var(--muted);font-size:12px}.opt em{margin-left:auto;font-style:normal;font-weight:600;font-size:12.5px;white-space:nowrap}
+.step{display:flex;gap:11px;padding:8px 0;align-items:flex-start}.dot{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--mint);color:var(--muted)}
+.step.done .dot{background:var(--deep);color:#fff}.step.now .dot{background:var(--gold);color:#0B3B2D}.step b{display:block;font-size:13.5px}.step small{color:var(--muted);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 12px;font:inherit;font-size:13px;min-height:44px;cursor:pointer}.chip[aria-pressed=true]{background:var(--deep);color:#fff;border-color:var(--deep)}
+.sheet{position:absolute;inset:0;background:rgba(5,15,11,.55);display:none;align-items:flex-end}.sheet.open{display:flex}
+.sheet>div{background:var(--scr);width:100%;border-radius:26px 26px 0 0;padding:18px 18px 24px;max-height:90%;overflow-y:auto}
+.ok{text-align:center;padding:8px 0}.ok .tick{width:56px;height:56px;border-radius:50%;background:var(--gold);color:#0B3B2D;font-size:28px;font-weight:700;display:grid;place-items:center;margin:0 auto 8px}
+.foot{font-size:11px;color:var(--muted);text-align:center;margin-top:4px}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:no-preference){.hero .big{transition:color .3s}.sheet>div{animation:up .25s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="cap"><h1>ShamsFlex app: working prototype</h1><p>Try it: change the bill, book a site visit, switch tabs. Savings and MovePass use a sample customer account.</p></div>
+<div class="phone"><div class="app">
+<header><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHJ4PSI1NCIgZmlsbD0iIzBCM0IyRCIvPjxjaXJjbGUgY3g9IjEyMC4wIiBjeT0iMTIwLjAiIHI9IjM2LjAiIGZpbGw9IiNGMkE5M0IiLz4KPHBhdGggZD0iTTUzLjQsOTguMyBBNzAuMCw3MC4wIDAgMCAxIDE2Ni44LDY3LjkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxNS4wIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTE3OC45LDgyLjIgTDE3Ni44LDU2LjggTDE1Ni44LDc5LjEgWiIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTE4Ni41LDE0MS42IEE3MC4wLDcwLjAgMCAwIDEgNzMuMSwxNzIuMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjE1LjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNNjEuMCwxNTcuNyBMNjMuMSwxODMuMSBMODMuMiwxNjAuOCBaIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8bGluZSB4MT0iNzMuMCIgeTE9IjEyOS45IiB4Mj0iNjMuMiIgeTI9IjEzMi4wIiBzdHJva2U9IiNGMkE5M0IiIHN0cm9rZS13aWR0aD0iNy4wIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjcyLjAiIHkxPSIxMjAuMCIgeDI9IjU4LjAiIHkyPSIxMjAuMCIgc3Ryb2tlPSIjRjJBOTNCIiBzdHJva2Utd2lkdGg9IjcuMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI3My4wIiB5MT0iMTEwLjAiIHgyPSI2My4yIiB5Mj0iMTA3LjkiIHN0cm9rZT0iI0YyQTkzQiIgc3Ryb2tlLXdpZHRoPSI3LjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iMTY2LjkiIHkxPSIxMTAuMCIgeDI9IjE3Ni43IiB5Mj0iMTA3LjkiIHN0cm9rZT0iI0YyQTkzQiIgc3Ryb2tlLXdpZHRoPSI3LjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iMTY4LjAiIHkxPSIxMjAuMCIgeDI9IjE4Mi4wIiB5Mj0iMTIwLjAiIHN0cm9rZT0iI0YyQTkzQiIgc3Ryb2tlLXdpZHRoPSI3LjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iMTY2LjkiIHkxPSIxMjkuOSIgeDI9IjE3Ni43IiB5Mj0iMTMyLjAiIHN0cm9rZT0iI0YyQTkzQiIgc3Ryb2tlLXdpZHRoPSI3LjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==" alt="ShamsFlex logo"><div><b id="hTitle">Your solar quote</b><small id="hSub">Based on your monthly SEC bill</small></div></header>
+<main>
+<!-- QUOTE -->
+<section id="v-quote">
+<div class="card">
+<label for="bill">Average monthly electricity bill (SAR)</label>
+<div class="row2"><input id="bill" type="number" inputmode="numeric" min="0" step="100" value="4500"><input id="billR" type="range" min="500" max="15000" step="100" value="4500" aria-label="Bill slider"></div>
+<div class="row2">
+<div><label for="type">Business type</label><select id="type"><option>Workshop</option><option>Warehouse</option><option>Retail shop</option><option>Restaurant / café</option><option>Office</option></select></div>
+<div><label for="city">City</label><select id="city"><option>Dammam</option><option>Khobar</option><option>Dhahran</option><option value="later">Other city</option></select></div>
+</div>
+<div class="row2">
+<div><label for="lease">Months left on lease</label><input id="lease" type="number" inputmode="numeric" min="0" max="240" value="24"></div>
+<div><label for="ll">Landlord & solar</label><select id="ll"><option value="ok">Approved</option><option value="nd" selected>Not asked yet</option><option value="no">Refused before</option></select></div>
+</div>
+</div>
+<div id="qOut"></div>
+</section>
+<!-- SAVINGS -->
+<section id="v-sav" hidden>
+<div class="hero"><div class="l" id="sLbl">Net saving, after all fees</div><div class="big" id="sBig"></div><div class="pill" id="sPill"></div></div>
+<div class="card"><b style="font-size:13.5px">Solar generated in 2027 (kWh) · tap a month</b><div class="bars" id="bars"></div><div class="mon" id="mons"></div></div>
+<div class="card" id="sTable"></div>
+<button class="btn alt" id="issue">Report a problem with my system</button>
+<p class="foot">Sample account: Al-Noor Auto Workshop, Dammam · 30 kWp · fee SAR 1,100/month</p>
+</section>
+<!-- MOVEPASS -->
+<section id="v-move" hidden>
+<div class="note"><b>Lease ends 30 Jun 2028</b>Choose what happens to your solar when you move. Fees are fixed in your contract.</div>
+<div role="radiogroup" aria-label="Moving option" id="opts"></div>
+<div class="card"><b style="font-size:13.5px">Request status</b><div id="steps"></div></div>
+<button class="btn" id="mvBtn">Send move notice</button>
+<p class="foot">Sample account · panels stay on the building and keep working for the next tenant</p>
+</section>
+</main>
+<nav role="tablist" aria-label="App sections">
+<button role="tab" aria-selected="true" data-v="quote"><i></i>Quote</button>
+<button role="tab" aria-selected="false" data-v="sav"><i></i>Savings</button>
+<button role="tab" aria-selected="false" data-v="move"><i></i>MovePass</button>
+</nav>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shT"><div id="shBody"></div></div>
+</div></div>
+</div>
+<script>
+{
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+// 2027 commercial tariff (Saudi Energy): 0.25 SAR/kWh up to 6,000 kWh, 0.35 above
+const cost=k=>k<=6000?k*0.25:1500+(k-6000)*0.35;
+const kwhFromBill=b=>b<=1500?b/0.25:6000+(b-1500)/0.35;
+const YIELD_M=150, CAPEX=2800, SHARE=0.70, DAYTIME=0.31, FEE_T=1500;
+function quote(){
+const bill=Math.max(0,+$('bill').value||0), lease=Math.max(0,+$('lease').value||0), ll=$('ll').value, city=$('city').value;
+const kwh=kwhFromBill(bill);
+let kwp=Math.round(kwh*DAYTIME/YIELD_M/5)*5; kwp=Math.min(100,Math.max(10,kwp));
+const out=$('qOut');
+if(city==='later'){out.innerHTML=`<div class="note"><b>We start in Dammam, Khobar and Dhahran</b>Leave your number and we'll call you when ShamsFlex reaches your city.</div><button class="btn" data-act="wait">Join the waiting list</button>`;return}
+if(bill<1000){out.innerHTML=`<div class="note"><b>Your bill is below our minimum</b>Rooftop sites need a bill of at least SAR 1,000 a month. SolarShare, our shared-solar option, is coming for smaller users.</div><button class="btn" data-act="wait">Notify me about SolarShare</button>`;return}
+const solar=kwp*YIELD_M, avoided=cost(kwh)-cost(kwh-solar);
+const fee=Math.round(avoided*SHARE/10)*10, save=avoided-fee, buy=kwp*CAPEX, pay=Math.ceil(buy/avoided);
+const b=[];
+b.push(`<span class="badge">${kwp} kWp roof system</span>`);
+b.push(lease<pay?`<span class="badge">Buying wouldn't pay back before your lease ends</span>`:`<span class="badge">Long lease: buying also an option</span>`);
+b.push(ll==='ok'?`<span class="badge">Landlord approved</span>`:ll==='nd'?`<span class="badge no">We'll talk to your landlord for you</span>`:`<span class="badge no">Landlord refused: SolarShare waitlist</span>`);
+out.innerHTML=`<div class="hero"><div class="l">Your net saving, after our fee</div><div class="big">SAR ${fmt(save)} <span>/ month</span></div><div class="pill">Keep ${Math.round(save/avoided*100)}% of solar savings · SAR 0 upfront</div></div>
+<div class="badges">${b.join('')}</div>
+<div class="card">
+<div class="kv"><span>Solar energy per month</span><b>${fmt(solar)} kWh</b></div>
+<div class="kv"><span>Grid cost you avoid</span><b>SAR ${fmt(avoided)}</b></div>
+<div class="kv"><span>ShamsFlex fee (70%)</span><b>SAR ${fmt(fee)}</b></div>
+<div class="kv hl"><span>You keep</span><b>SAR ${fmt(save)} / month</b></div>
+<div class="kv"><span>Maintenance, monitoring, insurance</span><b>Included</b></div>
+<div class="kv"><span>MovePass handover fee (if you move)</span><b>SAR ${fmt(FEE_T)}</b></div>
+</div>
+<div class="card"><b style="font-size:13.5px">Compared with buying the system</b>
+<div class="kv"><span>Upfront purchase</span><b>SAR ${fmt(buy)}</b></div>
+<div class="kv"><span>Time to pay back</span><b>${pay} months</b></div>
+<div class="kv"><span>Months left on your lease</span><b>${lease} months</b></div></div>
+<button class="btn" data-act="book" ${ll==='no'?'disabled':''}>Book a free site visit</button>
+<p class="foot">Estimate from your bill at the 2027 commercial tariff. Final offer after the site visit.</p>`;
+}
+['bill','lease','type','city','ll'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='bill')$('billR').value=$('bill').value;quote()}));
+$('billR').addEventListener('input',()=>{$('bill').value=$('billR').value;quote()});
+// ---------- savings (sample account) ----------
+const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const F=[.80,.88,1.0,1.08,1.15,1.12,1.10,1.10,1.06,.98,.88,.85];
+const FEE=1100, KWP=30; let sel=5;
+function sav(){
+const g=F.map(f=>Math.round(KWP*YIELD_M*f)), av=g.map(k=>k*0.35), max=Math.max(...g);
+$('bars').innerHTML=g.map((k,i)=>`<button class="${i===sel?'on':''}" style="height:${k/max*100}%" data-m="${i}" aria-label="${M[i]}: ${fmt(k)} kWh"></button>`).join('');
+$('mons').innerHTML=M.map(m=>`<span>${m}</span>`).join('');
+const net=av[sel]-FEE, ytd=av.slice(0,sel+1).reduce((a,b)=>a+b,0)-FEE*(sel+1);
+$('sLbl').textContent=`Net saving in ${M[sel]} 2027, after all fees`;
+$('sBig').innerHTML=`SAR ${fmt(net)} <span>/ month</span>`;
+$('sPill').textContent=`SAR ${fmt(ytd)} saved so far this year`;
+$('sTable').innerHTML=`<div class="kv"><span>Solar generated</span><b>${fmt(g[sel])} kWh</b></div><div class="kv"><span>Grid cost avoided</span><b>SAR ${fmt(av[sel])}</b></div><div class="kv"><span>ShamsFlex fee</span><b>SAR ${fmt(FEE)}</b></div><div class="kv hl"><span>Net saving</span><b>SAR ${fmt(net)}</b></div><div class="kv"><span>System status</span><b>All panels working</b></div>`;
+}
+$('bars').addEventListener('click',e=>{const b=e.target.closest('button');if(b){sel=+b.dataset.m;sav()}});
+// ---------- MovePass ----------
+const O=[['hand','Hand over to the next tenant','Panels stay; we find and sign the new tenant','SAR 1,500'],['site','Join a site at your new address','After a capacity and eligibility check','Quoted'],['exit','Pause or exit','Terms already in your contract','Fixed']];
+let opt='hand', stage=0;
+const S=[['Move notice sent','At least 60 days before lease end'],['Incoming tenant matched','We present ShamsFlex to the next tenant'],['Landlord consent','Landlord confirms the handover'],['Account switched and settled','Final statement in writing']];
+function move(){
+$('opts').innerHTML=O.map(o=>`<button class="opt" role="radio" aria-checked="${o[0]===opt}" data-o="${o[0]}" ${stage?'disabled':''}><span class="radio"></span><span><b>${o[1]}</b><small>${o[2]}</small></span><em>${o[3]}</em></button>`).join('');
+$('steps').innerHTML=S.map((s,i)=>`<div class="step ${i<stage?'done':i===stage&&stage?'now':''}"><div class="dot">${i<stage?'✓':i+1}</div><div><b>${s[0]}</b><small>${s[1]}</small></div></div>`).join('');
+const b=$('mvBtn');
+b.textContent=stage===0?'Send move notice':stage<4?'Demo: next step':'Done: start a new quote';
+}
+$('opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b&&!stage){opt=b.dataset.o;move()}});
+$('mvBtn').addEventListener('click',()=>{if(stage===4){stage=0;tab('quote');move();return}stage++;move();if(stage===1)sheet(`<div class="ok"><div class="tick">✓</div><h2 id="shT">Move notice received</h2><p class="sub">Reference MP-27-0418 · option: ${O.find(o=>o[0]===opt)[1].toLowerCase()}</p></div><button class="btn" data-act="close">OK</button>`)});
+// ---------- sheet (booking, issue, wait list) ----------
+const sh=$('sheet');
+function sheet(html){$('shBody').innerHTML=html;sh.classList.add('open');sh.querySelector('button')?.focus()}
+function closeSheet(){sh.classList.remove('open')}
+let day=null, slot=null;
+function booking(){
+const days=['Sun 6 Dec','Mon 7 Dec','Tue 8 Dec','Wed 9 Dec'], slots=['8–10 am','10–12 noon','4–6 pm'];
+sheet(`<h2 id="shT">Book your free site visit</h2><p class="sub">An engineer checks your roof, meter and daytime load (about 45 minutes).</p>
+<label>Day</label><div class="chips">${days.map(d=>`<button class="chip" data-day="${d}" aria-pressed="${d===day}">${d}</button>`).join('')}</div>
+<label>Time</label><div class="chips">${slots.map(s=>`<button class="chip" data-slot="${s}" aria-pressed="${s===slot}">${s}</button>`).join('')}</div>
+<label for="ph">Mobile number</label><input id="ph" type="tel" inputmode="tel" placeholder="05X XXX XXXX">
+<button class="btn" data-act="confirm" ${day&&slot?'':'disabled'}>Confirm visit</button><button class="btn alt" data-act="close">Cancel</button>`);
+}
+sh.addEventListener('click',e=>{
+if(e.target===sh)return closeSheet();
+const b=e.target.closest('button');if(!b)return;
+if(b.dataset.day){day=b.dataset.day;const ph=$('ph').value;booking();$('ph').value=ph}
+else if(b.dataset.slot){slot=b.dataset.slot;const ph=$('ph').value;booking();$('ph').value=ph}
+else if(b.dataset.act==='confirm'){const ph=$('ph').value.trim();if(!/^05\d{8}$/.test(ph.replace(/\s/g,''))){$('ph').setCustomValidity('x');$('ph').style.borderColor='#B5452F';$('ph').focus();return}
+sheet(`<div class="ok"><div class="tick">✓</div><h2 id="shT">Visit booked</h2><p class="sub">${day}, ${slot}. We'll confirm on WhatsApp and bring a written offer to review.</p></div><button class="btn" data-act="close">Done</button>`);day=slot=null}
+else if(b.dataset.act==='close')closeSheet();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+$('qOut').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+if(b.dataset.act==='book')booking();
+if(b.dataset.act==='wait')sheet(`<div class="ok"><div class="tick">✓</div><h2 id="shT">You're on the list</h2><p class="sub">We'll contact you as soon as this is available for you.</p></div><button class="btn" data-act="close">OK</button>`)});
+$('issue').addEventListener('click',()=>sheet(`<h2 id="shT">Report a problem</h2><p class="sub">Our technician replies on WhatsApp within one working day.</p><div class="chips">${['Output looks low','Panel damage','Inverter alarm','Billing question'].map(x=>`<button class="chip" data-act="iss">${x}</button>`).join('')}</div><button class="btn alt" data-act="close">Cancel</button>`));
+sh.addEventListener('click',e=>{const b=e.target.closest('[data-act=iss]');if(b)sheet(`<div class="ok"><div class="tick">✓</div><h2 id="shT">Ticket opened</h2><p class="sub">${b.textContent} · ticket SF-2271. A technician will contact you.</p></div><button class="btn" data-act="close">OK</button>`)});
+// ---------- tabs ----------
+const T={quote:['Your solar quote','Based on your monthly SEC bill'],sav:['My savings','Al-Noor Auto Workshop · Dammam'],move:['MovePass','Your solar has a moving plan']};
+function tab(v){document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
+['quote','sav','move'].forEach(x=>$('v-'+x).hidden=x!==v);$('hTitle').textContent=T[v][0];$('hSub').textContent=T[v][1];
+try{history.replaceState(null,'','#'+v)}catch(e){}}
+document.querySelector('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)tab(b.dataset.v)});
+quote();sav();move();
+const h=(location.hash||'').slice(1);if(T[h])tab(h);
+window.addEventListener('hashchange',()=>{const v=location.hash.slice(1);if(T[v])tab(v)});
+}
+</script>
+</body>
+</html>
